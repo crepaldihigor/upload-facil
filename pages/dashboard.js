@@ -1,4 +1,3 @@
-// pages/dashboard.js
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { auth } from '../firebase-config';
@@ -50,4 +49,11 @@ const styles = {
   logout: {
     marginTop: '20px',
     padding: '10px 20px',
-    fontSize: '1
+    fontSize: '16px',
+    backgroundColor: '#ff4d4f',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+  },
+};
