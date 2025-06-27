@@ -1,59 +1,53 @@
 // pages/dashboard.js
-import { useState, useEffect } from 'react';
-import { auth, db } from '../firebase-config';
-import { signOut } from 'firebase/auth';
-import { collection, addDoc, onSnapshot, query, where } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { auth } from '../firebase-config';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [videos, setVideos] = useState([]);
 
   useEffect(() => {
-    const unsub = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-        const q = query(collection(db, 'videos'), where('uid', '==', user.uid));
-        onSnapshot(q, (snapshot) => {
-          const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-          setVideos(list);
-        });
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
       } else {
         router.push('/login');
       }
     });
-    return () => unsub();
+
+    return () => unsubscribe();
   }, []);
 
-  const simulateUpload = async () => {
-    if (!title || !description) return alert('Preencha os campos');
-    await addDoc(collection(db, 'videos'), {
-      title,
-      description,
-      uid: user.uid,
-      createdAt: new Date(),
-    });
-    setTitle('');
-    setDescription('');
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push('/login');
   };
 
+  if (!user) {
+    return <p style={{ padding: 20 }}>Carregando...</p>;
+  }
+
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Bem-vindo, {user?.email}</h2>
-      <button onClick={() => signOut(auth).then(() => router.push('/login'))}>Sair</button>
-      <h3>Enviar novo vídeo (simulado)</h3>
-      <input placeholder="Título" value={title} onChange={(e) => setTitle(e.target.value)} /><br />
-      <textarea placeholder="Descrição" value={description} onChange={(e) => setDescription(e.target.value)} /><br />
-      <button onClick={simulateUpload}>Simular Envio</button>
-      <h3>Seus envios:</h3>
-      <ul>
-        {videos.map((v) => (
-          <li key={v.id}>{v.title} — {v.description}</li>
-        ))}
-      </ul>
-    </div>
+    <main style={styles.container}>
+      <h1>🎬 Bem-vindo ao Upload Fácil</h1>
+      <p>Você está logado como: <strong>{user.email}</strong></p>
+
+      <button onClick={handleLogout} style={styles.logout}>
+        Sair
+      </button>
+    </main>
   );
 }
+
+const styles = {
+  container: {
+    padding: '40px',
+    fontFamily: 'Arial, sans-serif',
+    textAlign: 'center',
+  },
+  logout: {
+    marginTop: '20px',
+    padding: '10px 20px',
+    fontSize: '1
