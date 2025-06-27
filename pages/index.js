@@ -1,15 +1,25 @@
 // pages/index.js
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { auth } from '../firebase-config';
 import { onAuthStateChanged } from 'firebase/auth';
 
 export default function Home() {
-  const router = useRouter();
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      router.push(user ? '/dashboard' : '/login');
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log('Usuário logado:', user.email);
+      } else {
+        console.log('Usuário deslogado');
+      }
     });
+
+    return () => unsubscribe(); // limpa ao sair da página
   }, []);
-  return <div>Carregando...</div>;
+
+  return (
+    <main>
+      <h1>Upload Fácil</h1>
+      <a href="/login">Login</a>
+    </main>
+  );
 }
