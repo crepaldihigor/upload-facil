@@ -7,10 +7,10 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [modoCadastro, setModoCadastro] = useState(false);
-  const [erro, setErro] = useState('');
   const [mensagem, setMensagem] = useState('');
+  const [erro, setErro] = useState('');
 
-  const handleAuth = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErro('');
     setMensagem('');
@@ -29,32 +29,37 @@ export default function Login() {
   };
 
   return (
-    <main>
+    <main style={{ padding: '20px' }}>
       <h1>{modoCadastro ? 'Criar Conta' : 'Login'}</h1>
-      <form onSubmit={handleAuth}>
+
+      <form onSubmit={handleSubmit}>
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Seu email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          style={{ display: 'block', marginBottom: '10px' }}
         />
         <input
           type="password"
-          placeholder="Senha"
+          placeholder="Sua senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          style={{ display: 'block', marginBottom: '10px' }}
         />
-        <button type="submit">{modoCadastro ? 'Criar Conta' : 'Entrar'}</button>
+        <button type="submit">
+          {modoCadastro ? 'Criar Conta' : 'Entrar'}
+        </button>
       </form>
 
-      <button onClick={() => setModoCadastro(!modoCadastro)}>
-        {modoCadastro ? 'Já tenho conta' : 'Criar nova conta'}
+      <button onClick={() => setModoCadastro(!modoCadastro)} style={{ marginTop: '10px' }}>
+        {modoCadastro ? 'Já tenho uma conta' : 'Criar nova conta'}
       </button>
 
-      {erro && <p style={{ color: 'red' }}>Erro: {erro}</p>}
       {mensagem && <p style={{ color: 'green' }}>{mensagem}</p>}
+      {erro && <p style={{ color: 'red' }}>Erro: {erro}</p>}
     </main>
   );
 }
