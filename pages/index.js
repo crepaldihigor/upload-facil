@@ -13,13 +13,13 @@ export default function Home() {
       }
     });
 
-    return () => unsubscribe(); // limpa ao sair da página
+    return () => unsubscribe(); // Encerra o monitoramento ao sair da página
   }, []);
 
   return (
     <main>
       <h1>Upload Fácil</h1>
-      <a href="/login">Login</a>
+      <a href="/login">Ir para Login</a>
     </main>
   );
 }
